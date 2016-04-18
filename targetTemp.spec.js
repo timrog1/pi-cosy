@@ -7,10 +7,11 @@ require('expectations');
 describe("targetTemp", () => {
 	let sut = require("./targetTemp");
 
-	let schedule = { days: Array(7).fill([ [ "0800", 20 ], [ "1200", 16 ] ]) };
+	var schedule;
+	beforeEach(() => schedule = { days: Array(7).fill([ [ "0800", 20 ], [ "1200", 16 ] ]) });
 
 	let expectTempToBe = (expected, now) => 
-		sut(rx.Observable.of(schedule), now)
+		sut(rx.Observable.of(schedule), rx.Observable.of(now))
 			.first().toPromise()
 			.then(t => expect(t).toBe(expected));
 	
@@ -43,11 +44,11 @@ describe("targetTemp", () => {
 	
 	it("should update when the schedule updates", () => {
 		let now = new Date (2016, 3, 3, 10, 20); 		
-		let updatedSchedule = { days: Array(7).fill([ [ "0800", 20 ], [ "1000", 16 ] ]) };
+		let updatedSchedule = { days: Array(7).fill([ [ "0800", 20 ], [ "1000", 15 ] ]) };
 		let sequence = rx.Observable.of(schedule, updatedSchedule);
 			
-		return sut(sequence, now)
-			.take(2).toArray().toPromise()
-			.then(a => expect(a).toBe([20, 15]));
+		return sut(sequence, rx.Observable.of(now))
+			.first().toPromise()
+			.then(a => expect(a).toBe(15));
 	});
 });
