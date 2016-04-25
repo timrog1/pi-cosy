@@ -13,7 +13,7 @@ var server = http.createServer((request, response) => {
     if (/^\/static\/.+/.test(request.url)) {
         request.addListener("end", () => staticServer.serve(request, response)).resume();
     } else if (request.url == "/status") {
-        weatherSensor(sensorConfig).fetch().then(temp => response.end(`It's ${temp} °C`));
+        weatherSensor(sensorConfig).first().toPromise().then(temp => response.end(`It's ${temp} °C`));
     } else {
         response.statusCode = 404;
         response.end();
