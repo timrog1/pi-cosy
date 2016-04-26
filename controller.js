@@ -8,6 +8,7 @@ function map(sensor, target){
 module.exports = {
 	relayPositions: (sensorObs, targetObs) => {
 		return rx.Observable.combineLatest(sensorObs, targetObs, map)
-			.scan((previous, current) => current === undefined ? previous : current, false);
+			.scan((previous, current) => current === undefined ? previous : current, false)
+			.distinctUntilChanged();
 	}
 };

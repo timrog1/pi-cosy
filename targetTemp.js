@@ -14,10 +14,10 @@ module.exports = (scheduleObs, timeObs) => {
 		let time = now.getHours() * 60 + now.getMinutes();
 		let yesterday = schedule.days[(day + 6) % 7];
 		let target = yesterday[yesterday.length - 1][1];
-		schedule.days[day].forEach(p => target = toMinutes(p[0]) < time ? p[1] : target);
+		schedule.days[day].forEach(p => target = toMinutes(p[0]) <= time ? p[1] : target);
 			
 		return target;
 	};
 		
-	return rx.Observable.combineLatest(scheduleObs, timeObs.throttleTime(60000), calculate);
+	return rx.Observable.combineLatest(scheduleObs, timeObs, calculate).distinctUntilChanged();
 };
