@@ -17,7 +17,7 @@ function toLogFile(entries)
 		mm = pad(date.getMinutes()),
 		filename = `logs/${y}${m}${d}.txt`,
 		time = `${hh}${mm}`,
-		data = entries.join(" "),
+		data = entries.map(e => e.toFixed(1)).join(" "),
 		line = `${time} ${data}`;
 
 	console.log(line);

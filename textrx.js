@@ -2,20 +2,10 @@
 
 let rx = require("rxjs");
 
-var subs;
-rx.Observable.combineLatest(
-	rx.Observable.create(
-		a => {
-			a.next(1);
-			subs = a;
-		}
-	).map(i => "A=" + i), 
-	rx.Observable.of(4,5,6).map(i => " B=" + i), 
+rx.Observable.combineLatest (
+	rx.Observable.timer(0, 900),
+	rx.Observable.timer(0, 1100),
 	(a, b) => a + b)
-	.subscribe(x => {
-		console.log(x);
-		if(subs){
-		subs.next(2);
-		subs.complete();
-		subs = undefined;}
-	}	);
+
+	.map(t => {if(t == 10) throw "This should trigger a meltdown"; else return t; })
+	.subscribe(t => console.log(t));
