@@ -3,17 +3,17 @@ let http = require("http");
 
 module.exports = {
 	get: function(url) {
-		let options = {
-			host: "proxy",
-			port: 8080,
-			path: url,
-			headers: {
-				Host: /\w+\:\/\/([^\/]+).*/.exec(url)[1]
-			}
-		};
+		// let options = {
+		// 	host: "proxy",
+		// 	port: 8080,
+		// 	path: url,
+		// 	headers: {
+		// 		Host: /\w+\:\/\/([^\/]+).*/.exec(url)[1]
+		// 	}
+		// };
 
 		return new Promise((resolve, reject) => {
-			http.get(options,
+			http.get(url,
 		        response => {
 		            var body = "";
 		            response.on("data", chunk => body += chunk);
