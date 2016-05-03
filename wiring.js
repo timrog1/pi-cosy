@@ -17,8 +17,10 @@ let config = {
     apiKey: "fec3e673e40c2bd7e653fde691adb046"
 };
 
+controller.relayPositions(sensor, target).subscribe(relay.set);
+
 module.exports = {
 	weatherSensor: weather(config),
 	targetTemp: target,
-	controlRelay: () => controller.relayPositions(sensor, target).subscribe(relay.set)
+	relayPositions: controller.relayPositions(sensor, target)
 };
