@@ -4,7 +4,7 @@ let rx = require("rxjs");
 
 module.exports = rx.Observable.create(obs => 
 	temp.sensors((err, ids) => {
-		if (err || !ids || !ids[0]) obs.next(20);
+		if (err || !ids || !ids[0]) obs.next(undefined);
 		else {
 			let id = ids[0];
 			let fetch = () => temp.temperature(id, (e, value) => obs.next(value));

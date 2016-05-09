@@ -19,8 +19,16 @@ let config = {
 
 controller.relayPositions(sensor, target).subscribe(relay.set);
 
-module.exports = {
-	weatherSensor: weather(config),
-	targetTemp: target,
-	relayPositions: controller.relayPositions(sensor, target)
-};
+module.exports = rx.Observable.combineLatest(
+	sensor,
+	weather(config),
+	target,
+	schedule,
+	controller.relayPositions(sensor, target),
+	(s, w, t, sc, r) => ({
+		inside: s,
+		outside: w,
+		target: t,
+		schedule: sc,
+		relay: r
+	}));
