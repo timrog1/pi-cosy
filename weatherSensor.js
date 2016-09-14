@@ -5,9 +5,17 @@ let rx = require("rxjs");
 function weatherSensor(config) {
     let endpoint = `http://api.openweathermap.org/data/2.5/weather?q=${config.location}&APPID=${config.apiKey}`;
 
-    let fetch = () => rest.get(endpoint).then(response => response.main.temp - 273.15);
+    let responseToTemp = response => {
+		var temp = (response.main && response.main.temp && response.main.temp - 273.15) || undefined;
+		if (temp === undefined)
+			console.error("Cannot read OpenWeatherMap response: " + response);
 
-	return rx.Observable.timer(0, 600000).flatMap(fetch);
+		return temp;
+    }
+
+    return rx.Observable.timer(0, 1800000)
+		.flatMap(() => rest.get(endpoint).then(responseToTemp, () => undefined))
+		.cache(1);
 }
 
 module.exports = weatherSensor;
