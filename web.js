@@ -1,20 +1,10 @@
-var http = require("http");
-var nodeStatic = require("node-static");
 var wiring = require("./wiring");
+var express = require("express");
+var app = express();
 
-var staticServer = new nodeStatic.Server(".");
+app.get('/status', (request, response) => 
+	wiring.first().subscribe(status => response.json(status)));
 
-var server = http.createServer((request, response) => {
-    if (/^\/static\/.+/.test(request.url)) {
-        request.addListener("end", () => staticServer.serve(request, response)).resume();
-    } else if (request.url == "/status") {
-        wiring.first().subscribe(status => response.end(JSON.stringify(status)));
-    } else {
-        response.statusCode = 404;
-        response.end();
-    }
-});
-    
-server.listen(80);
+app.use('/', express.static('static'));
 
-console.log("listening");
+app.listen(80, () => console.log("listening"));
