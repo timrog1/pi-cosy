@@ -2,7 +2,8 @@
 
 let rx = require("rxjs");
 let rest = require("./rest");
-let wiring = require("./wiring");
+let sensor = require("./sensor");
+require("./observable-files");
 
 /*var t = 290;
 rest = {
@@ -22,12 +23,13 @@ let endpoint = `http://api.openweathermap.org/data/2.5/weather?q=GU85BY,UK&APPID
 		return temp;
     };
 	
-let timer = rx.Observable.timer(0, 1800000)
+let weather = rx.Observable.timer(0, 1800000)
 	.flatMap(() => rest.get(endpoint).then(responseToTemp, () => undefined))
 	.cache(1);
-	
-//timer.subscribe(i => console.log("A: " + i));
 
-//setTimeout(() => timer.subscribe(i => console.log("B: " + i)), 5500);
+let timer = rx.Observable.timer(0, 5000);
 
-rx.Observable.timer(0, 1000).subscribe(() => wiring.first().map(x => x.outside).subscribe(x => console.log("C:" + x)));
+let file = rx.Observable.fromFile("config.json");
+
+rx.Observable.combineLatest(weather, timer, sensor, (w, t, s) => "A" + w + "/" + s)
+	.subscribe(x => console.log(x));

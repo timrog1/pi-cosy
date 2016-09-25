@@ -31,4 +31,4 @@ module.exports = rx.Observable.combineLatest(
 		target: t,
 		schedule: sc,
 		relay: r
-	}));
+	})).cache(1);

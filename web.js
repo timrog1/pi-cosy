@@ -15,6 +15,6 @@ var server = http.createServer((request, response) => {
     }
 });
     
-server.listen(2345);
+server.listen(80);
 
 console.log("listening");
