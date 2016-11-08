@@ -8,13 +8,12 @@ if(/^win/.test(process.platform))
 }
 else
 {
-	var gpio = require("rpi-gpio");
+	var gpio = require("pi-gpio");
 	var pin = 12;
 	var value = false;
 
 	module.exports = {
 		set: value =>
-			gpio.setup(pin, gpio.DIR_OUT, () =>  
-				gpio.write(pin, value, () => {}))
+			gpio.open(pin, "output", () => gpio.write(pin, value, () => gpio.close(pin)))
 	};
 }

@@ -9,5 +9,7 @@ module.exports = rx.Observable.create(obs =>
 			let id = ids[0];
 			let fetch = () => temp.temperature(id, (e, value) => obs.next(value));
 			rx.Observable.timer(0, 1000).subscribe(fetch);
+			fetch();
 		}
-	}));
+	}))
+	.distinctUntilChanged();

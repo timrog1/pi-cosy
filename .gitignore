@@ -1,2 +1,4 @@
 logs/**
 nohup.out
+startup.log
+node_modules/**
