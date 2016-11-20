@@ -12,8 +12,8 @@ else
 	var pin = 12;
 	var value = false;
 
+	var openp = new Promise (resolve => gpio.open(pin, "output", resolve));
 	module.exports = {
-		set: value =>
-			gpio.open(pin, "output", () => gpio.write(pin, value, () => gpio.close(pin)))
+		set: value => openp.then(() => gpio.write(pin, value))
 	};
 }

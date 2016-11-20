@@ -35,22 +35,26 @@ body {
   font-weight: 200;
 }
 
-.button-strip button {
+button {
   background: none;
-  border: 1px solid #5eba7d;
+  border: none;
   color: #5eba7d;
-  border-radius: 0 50% 50% 0;
   margin: 0;
   font-size:24px;
-  padding:4px 12px;
 }
 
-.button-strip button:hover {
+button:hover {
   background-color: #b7e0c5;
 }
 
-.button-strip button:focus {
-  outline: 5px auto -webkit-focus-ring-color;
+button:focus {
+  outline: 0px auto -webkit-focus-ring-color;
+}
+
+.button-strip button {
+  border-radius:  0 50% 50% 0;
+  border: 1px solid #5eba7d;
+  padding:4px 12px;
 }
 
 .button-strip button:first-child {
@@ -58,29 +62,17 @@ body {
   border-radius: 50% 0 0 50%;
 }
 
-button.round {
-  background: none;
-  border: 1px solid #5eba7d;
-  color: #5eba7d;
-  border-radius: 50%;
-  padding: 1px;
-}
-
-button.round:focus{
-  outline:0 !important;
-}
-
 .fa {
   color: #82c99a;
 }
 
-.row {
-  padding:16px 0;
+section {
+  padding:16px 0 16px 2.5em;
   border-bottom: 1px solid #82c99a;
 }
 
-.row > i {
-  width:1.5em;
+section > i { 
+  margin-left: -2.5em;
 }
 
 header {

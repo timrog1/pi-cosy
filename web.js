@@ -22,6 +22,13 @@ app.getRequestsTo('/status')
 	.withLatestFrom(wiring.values, (x, status) => x.response.json(status) )
 	.subscribe();
 	
+
+app.deleteRequestsTo('/schedule/override')
+	.subscribe(x => { 
+		wiring.schedule.clearOverride();
+		x.response.sendStatus(201);
+	});
+	
 app.putRequestsTo('/schedule/override')
 	.subscribe(x => {
 		let body = x.request.body;
@@ -33,6 +40,9 @@ app.putRequestsTo('/schedule/override')
 			x.response.sendStatus(400);
 	});
 
+
+let babel = require('express-babelify-middleware');
+app.use('/console.js', babel('static/console.js'))
 app.use('/', express.static('static'));
 
 app.listen(port, () => console.log("listening"));
