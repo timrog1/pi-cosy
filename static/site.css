@@ -1,0 +1,91 @@
+@import 'https://fonts.googleapis.com/css?family=Work+Sans:100,200,400';
+  
+@import 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css';
+
+body {
+  font-size:140%;
+}
+
+h1 {
+  margin: 0;
+  font-size:400%;
+  font-weight:100;
+}
+
+section {
+  border-bottom: 1px solid #c9e8d3;
+  padding: 20px;
+}
+
+.inline {
+  display: inline-block;
+}
+
+body {
+  font-family: 'Work Sans';
+  color: #5eba7d;
+}
+
+.pleft {
+  width: 25%;
+}
+
+.status {
+  font-size: 300%;
+  font-weight: 200;
+}
+
+button {
+  background: none;
+  border: none;
+  color: #5eba7d;
+  margin: 0;
+  font-size:24px;
+}
+
+button:hover {
+  background-color: #b7e0c5;
+}
+
+button:focus {
+  outline: 0px auto -webkit-focus-ring-color;
+}
+
+.button-strip button {
+  border-radius:  0 50% 50% 0;
+  border: 1px solid #5eba7d;
+  padding:4px 12px;
+}
+
+.button-strip button:first-child {
+  border-width: 1px 0 1px 1px;
+  border-radius: 50% 0 0 50%;
+}
+
+.fa {
+  color: #82c99a;
+}
+
+section {
+  padding:16px 0 16px 2.5em;
+  border-bottom: 1px solid #82c99a;
+}
+
+section > i { 
+  margin-left: -2.5em;
+}
+
+header {
+  font-size: 10px;
+}
+
+.fa-fire
+{
+  animation: flicker .4s linear infinite;
+}
+
+@keyframes flicker
+{
+  0%,100%   { opacity: 0.5 ;}
+  75%  { opacity:1.0; }
+}

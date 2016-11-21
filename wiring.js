@@ -6,29 +6,36 @@ let targetTemp = require("./targetTemp");
 let relay = require("./relay");
 let controller = require("./controller");
 let weather = require("./weatherSensor");
-require("./observable-files");
+let schedule = require("./schedule")("schedule.json");
 
-let schedule = rx.Observable.fromFile("schedule.json").map(data => JSON.parse(data));
 let time = rx.Observable.timer(0, 1000).map(() => new Date());
+
 let target = targetTemp(schedule, time);
 
 let config = {
-    location: "GU85BY,UK",
+    location: "GU8+5BY,UK",
     apiKey: "fec3e673e40c2bd7e653fde691adb046"
 };
 
-controller.relayPositions(sensor, target).subscribe(relay.set);
+let weatherObs = weather(config);
 
-module.exports = rx.Observable.combineLatest(
-	sensor,
-	weather(config),
-	target,
-	schedule,
-	controller.relayPositions(sensor, target),
-	(s, w, t, sc, r) => ({
-		inside: s,
-		outside: w,
-		target: t,
-		schedule: sc,
-		relay: r
-	}));
+let relayPositions = controller.relayPositions(sensor, target);
+
+relayPositions.subscribe(relay.set);
+
+module.exports = {
+	schedule: schedule,
+	values: rx.Observable.combineLatest(
+		sensor,
+		weatherObs,
+		target,
+		schedule,
+		relayPositions,
+		(s, w, t, sc, r) => ({
+			inside: s,
+			outside: w,
+			target: t,
+			schedule: sc,
+			relay: r
+		}))
+};

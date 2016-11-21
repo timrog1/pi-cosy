@@ -8,13 +8,12 @@ if(/^win/.test(process.platform))
 }
 else
 {
-	var gpio = require("rpi-gpio");
+	var gpio = require("pi-gpio");
 	var pin = 12;
 	var value = false;
 
+	var openp = new Promise (resolve => gpio.open(pin, "output", resolve));
 	module.exports = {
-		set: value =>
-			gpio.setup(pin, gpio.DIR_OUT, () =>  
-				gpio.write(pin, value, () => {}))
+		set: value => openp.then(() => gpio.write(pin, value))
 	};
 }

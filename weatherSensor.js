@@ -8,14 +8,16 @@ function weatherSensor(config) {
     let responseToTemp = response => {
 		var temp = (response.main && response.main.temp && response.main.temp - 273.15) || undefined;
 		if (temp === undefined)
-			console.error("Cannot read OpenWeatherMap response: " + response);
+			console.error("Cannot read OpenWeatherMap response: " + JSON.stringify(response));
 
 		return temp;
     }
 
+    console.log("obs created");
     return rx.Observable.timer(0, 1800000)
+    		.do(i => console.log("timer hit"))
 		.flatMap(() => rest.get(endpoint).then(responseToTemp, () => undefined))
-		.cache(1);
+		.cache(20000);
 }
 
 module.exports = weatherSensor;
