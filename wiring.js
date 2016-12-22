@@ -19,23 +19,27 @@ let config = {
 
 let weatherObs = weather(config);
 
-let relayPositions = controller.relayPositions(sensor, target);
+let relayPositions = controller.relayPositions(sensor, target).cache(1);
 
-relayPositions.subscribe(relay.set);
+relayPositions.subscribe(_ => console.log(_));
+
+let statusCombined = rx.Observable.combineLatest(
+	sensor,
+	weatherObs,
+	target,
+	schedule,
+	relayPositions,
+	(s, w, t, sc, r) => ({
+		inside: s,
+		outside: w,
+		target: t,
+		schedule: sc,
+		relay: r
+	}));
 
 module.exports = {
 	schedule: schedule,
-	values: rx.Observable.combineLatest(
-		sensor,
-		weatherObs,
-		target,
-		schedule,
-		relayPositions,
-		(s, w, t, sc, r) => ({
-			inside: s,
-			outside: w,
-			target: t,
-			schedule: sc,
-			relay: r
-		}))
+	values: statusCombined
 };
+
+require("./logging")(statusCombined);

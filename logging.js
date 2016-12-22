@@ -1,22 +1,20 @@
 "use strict";
 
 let rx = require("rxjs");
-let sensor = require("./sensor");
-let wiring = require("./wiring");
-
 let fs = require("fs");
 
 var pad = x => (x < 10 ? "0" : "") + x;
 
-function toEntry(entries)
+function toEntry(status)
 {
 	var date = new Date(),		
 		hh = pad(date.getHours()),
 		mm = pad(date.getMinutes()),		
 		time = `${hh}${mm}`,
+		entries = [ status.inside, status.outside, status.target ],
 		data = entries.map(e => e.toFixed(1)).join(" ");
 
-	return `${time} ${data}`;
+	return `${time} ${data} ${~~status.relay}`;
 }
 
 function appendToFile(line)
@@ -26,15 +24,14 @@ function appendToFile(line)
 		m = pad(date.getMonth() + 1),
 		d = pad(date.getDate()),
 		filename = `logs/${y}${m}${d}.txt`;
-		
-	fs.appendFile(filename, line + "\r\n", "utf8", () => {})
+	
+	fs.appendFile(filename, line + "\r\n", "utf8", err => { if(err) console.warn(err); } )
 }
 
-var lines = rx.Observable.combineLatest(wiring.targetTemp, sensor, function(){ return Array.prototype.slice.call(arguments); })
-	.throttleTime(60000)
-	.map(toEntry);
-	
-lines.subscribe(appendToFile);
+let timer = rx.Observable.timer(0, 60000);
 
-lines.subscribe(console.log);
+module.exports = status => 
+	timer
+	.withLatestFrom(status, (_, s) => toEntry(s))
+	.subscribe(appendToFile, err => console.warn(err));
 

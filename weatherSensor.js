@@ -15,7 +15,6 @@ function weatherSensor(config) {
 
     console.log("obs created");
     return rx.Observable.timer(0, 1800000)
-    		.do(i => console.log("timer hit"))
 		.flatMap(() => rest.get(endpoint).then(responseToTemp, () => undefined))
 		.cache(20000);
 }

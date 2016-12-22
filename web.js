@@ -8,6 +8,9 @@ var bodyParser = require('body-parser')
 var app = express();
 var rx = require("rxjs");
 
+app.use(bodyParser.json());
+
+
 ['get', 'put', 'post', 'delete'].map(method =>
 	app[method + "RequestsTo"] = url => 
 	{
@@ -16,12 +19,9 @@ var rx = require("rxjs");
 		return requests;
 	});
 
-app.use(bodyParser.json());
-
 app.getRequestsTo('/status')
-	.withLatestFrom(wiring.values, (x, status) => x.response.json(status) )
-	.subscribe();
-	
+	.withLatestFrom(wiring.values, (req, values) => [ req, values ] )
+	.subscribe(([req, values]) => req.response.json(values));
 
 app.deleteRequestsTo('/schedule/override')
 	.subscribe(x => { 
@@ -40,10 +40,11 @@ app.putRequestsTo('/schedule/override')
 			x.response.sendStatus(400);
 	});
 
-
 let babel = require('express-babelify-middleware');
-app.use('/console.js', babel('static/console.js'))
-app.use('/', express.static('static'));
+app.use('/console.js', babel('static/console.js'));
+app.use(express.static('static'));
+
+app.use((req, res) => res.status(404).send("Not found"));
 
 app.listen(port, () => console.log("listening"));
 

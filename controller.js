@@ -1,7 +1,8 @@
 "use strict";
 let rx = require("rxjs/Rx");
 
-function map(sensor, target){
+function map(sensor, target) {
+	sensor = sensor || 99;
 	return sensor < target ? sensor <= (target - 0.5) ? true : undefined : false;
 }
 
