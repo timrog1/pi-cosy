@@ -32,6 +32,6 @@ let timer = rx.Observable.timer(0, 60000);
 
 module.exports = status => 
 	timer
-	.withLatestFrom(status, (_, s) => toEntry(s))
-	.subscribe(appendToFile, err => console.warn(err));
+		.withLatestFrom(status, (_, s) => toEntry(s))
+		.subscribe(appendToFile, err => console.warn(err));
 

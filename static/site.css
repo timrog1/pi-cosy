@@ -25,6 +25,8 @@ section {
 body {
   font-family: 'Work Sans';
   color: #5eba7d;
+  padding:0;
+  margin:0;
 }
 
 .pleft {
@@ -39,41 +41,53 @@ body {
 button {
   background: none;
   border: none;
-  color: #5eba7d;
+  color: inherit;
   margin: 0;
   font-size:24px;
 }
 
 button:hover {
-  background-color: #b7e0c5;
+  background-color: rgba(111, 193, 139, .5);
 }
 
 button:focus {
   outline: 0px auto -webkit-focus-ring-color;
 }
 
-.button-strip button {
-  border-radius:  0 50% 50% 0;
-  border: 1px solid #5eba7d;
-  padding:4px 12px;
+.current-main { 
+  width:3em;
+  text-align:center;
 }
 
-.button-strip button:first-child {
-  border-width: 1px 0 1px 1px;
-  border-radius: 50% 0 0 50%;
+.full-buttons { 
+  position: relative;
 }
 
-.fa {
-  color: #82c99a;
+.full-buttons button { 
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:50%;
+}
+
+.full-buttons button.minus { 
+  left:0;
+  text-align: left;
+}
+
+.full-buttons button.plus { 
+  right:0;
+  text-align: right;
 }
 
 section {
   padding:16px 0 16px 2.5em;
   border-bottom: 1px solid #82c99a;
+  transition: background-color .5s, color .5s;
 }
 
 section > i { 
-  margin-left: -2.5em;
+  margin-left: -2.0em;
 }
 
 header {
@@ -89,4 +103,17 @@ header {
 {
   0%,100%   { opacity: 0.5 ;}
   75%  { opacity:1.0; }
+}
+
+section.override { 
+    background-color: #5eba7d;
+    color: white;
+}
+
+section.override button.clear { 
+  display: inline;
+}
+
+button.clear { 
+  display:none;
 }
