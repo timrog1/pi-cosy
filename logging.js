@@ -11,8 +11,8 @@ function toEntry(status)
 		hh = pad(date.getHours()),
 		mm = pad(date.getMinutes()),		
 		time = `${hh}${mm}`,
-		entries = [ status.inside, status.outside, status.target ],
-		data = entries.map(e => e.toFixed(1)).join(" ");
+		entries = [ status.inside, status.outside, status.target.current ],
+		data = entries.map(e => e ? e.toFixed(1) : "").join(" ");
 
 	return `${time} ${data} ${~~status.relay}`;
 }

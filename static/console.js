@@ -3,32 +3,33 @@ angular.module("console", [])
     .directive("currentTemps", ($timeout, $http) => ({ 
             template: `<div class="currentTemps">
                 <section>
-                    <i class="fa fa-thermometer-3"></i>
+                    <i class="icon-target"></i>
                     <div class="inline">
-                        <h1 class="current-main inline">{{status.target | number : 0}}°C</h1>
+                        <h1 class="current-main inline">{{status.target.current | number : 0}}°C</h1>
                         <i ng-if="status.relay" class="fa fa-fire"></i>
                         <span class="button-strip">
                             <button ng-click="changeTarget(-1)"><i class="fa fa-thermometer-empty"></i></button><button ng-click="changeTarget(+1)"><i class="fa fa-thermometer-full"></i></button>
                         </span> 
                     </div>
                 </section>
-                <section ng-if="hasOverride(status.schedule.override)">
-                    <i class="fa fa-clock-o"></i>
+                <section>
+                    <i class="icon-watch"></i>
                     <div class="inline">
-                        until {{ status.schedule.override[0] | date : 'H:mm' }} 
+                        until {{ status.target.next[0] | date : 'H:mm' }} 
+                        (then {{ status.target.next[1] | number : 0}}°C)
                         <button ng-click="changeTime(-30)"><i class="fa fa-minus-circle"></i></button>                        
                         <button ng-click="changeTime(30)"><i class="fa fa-plus-circle"></i></button>                        
                         <button ng-click="clear()"><i class="fa fa-undo"></i></button>
                     </div>
                 </section>
                 <section>
-                    <i class="fa fa-home"></i>
+                    <i class="icon-thermometer"></i>
                     <div class="inline">
                         {{status.inside | number : 1}}°C
                     </div> 
                 </section>
                 <section class="current-outside">
-                    <i class="fa fa-tree"></i>
+                    <i class="icon-cloud"></i>
                     {{status.outside | number : 1}}°C
                 </section>
                </div>
@@ -42,10 +43,10 @@ angular.module("console", [])
                 }
 
                 scope.changeTarget = increment => {
-                    let s = scope.status;
-                    s.target += increment;
+                    let target = scope.status.target;
+                    target.current += increment;
                     let overrideDate = new Date((new Date().getTime()) + 60*60*1000);
-                    $http.put("/schedule/override", [ overrideDate, scope.status.target ]);
+                    $http.put("/schedule/override", [ overrideDate, target.current ]);
                 }
 
                 scope.changeTime = increment => {

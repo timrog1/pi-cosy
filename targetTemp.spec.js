@@ -10,10 +10,11 @@ describe("targetTemp", () => {
 	var schedule;
 	beforeEach(() => schedule = { days: Array(7).fill([ [ "0800", 20 ], [ "1200", 16 ] ]) });
 
+	let getTarget = (now) =>
+		sut(rx.Observable.of(schedule), rx.Observable.of(now)).first().toPromise();
+
 	let expectTempToBe = (expected, now) => 
-		sut(rx.Observable.of(schedule), rx.Observable.of(now))
-			.first().toPromise()
-			.then(t => expect(t).toBe(expected));
+		getTarget(now).then(t => expect(t.current).toBe(expected));
 	
 	it("should provide the target for the current time of day", () => {
 		let now = new Date (2016, 3, 3, 10, 20); // Sunday
@@ -49,6 +50,22 @@ describe("targetTemp", () => {
 			
 		return sut(sequence, rx.Observable.of(now))
 			.first().toPromise()
-			.then(a => expect(a).toBe(15));
+			.then(a => expect(a.current).toBe(15));
+	});
+
+	it("should give the next time and temperature change", () => {
+		let now = new Date (2016, 3, 3, 10, 20); // Sunday
+		return getTarget(now).then(t => expect(t.next).toEqual([new Date(2016, 3, 3, 12, 0), 16]));
+	});
+
+	it("should give the next time and temperature change after an override", () => {
+		schedule.override = [new Date(2016, 3, 3, 9, 25), 25];
+		let now = new Date (2016, 3, 3, 8, 20); // Sunday
+		return getTarget(now).then(t => expect(t.next).toEqual([new Date(2016, 3, 3, 9, 25), 20]));
+	});
+
+	it("the next time should wrap around to the following day", () => {
+		let now = new Date (2016, 3, 3, 18, 11);
+		return getTarget(now).then(t => expect(t.next).toEqual([new Date(2016, 3, 4, 8, 0), 20]));
 	});
 });

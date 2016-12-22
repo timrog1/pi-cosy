@@ -19,7 +19,7 @@ let config = {
 
 let weatherObs = weather(config);
 
-let relayPositions = controller.relayPositions(sensor, target).cache(1);
+let relayPositions = controller.relayPositions(sensor, target.map(t => t.current)).cache(1);
 
 relayPositions.subscribe(_ => console.log(_));
 

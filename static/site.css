@@ -1,6 +1,7 @@
 @import 'https://fonts.googleapis.com/css?family=Work+Sans:100,200,400';
   
 @import 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css';
+@import 'feather.css';
 
 body {
   font-size:140%;
