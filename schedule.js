@@ -22,8 +22,8 @@ module.exports = (filename, scheduler) => {
 	//	updates.throttleTime(5000, scheduler)
 	//		.subscribe(s => fs.writeFile(filename, JSON.stringify(s), (e) => console.log(e? "Write error " + e : "Written")));
 
-	schedules.override = (date, temperature) => overrideSubject.next([ new Date(date), temperature ]);
-	schedules.clearOverride = () => overrideSubject.next();
+	schedules.override = changes => overrideSubject.next(changes);
+	schedules.clearOverride = () => overrideSubject.next([]);
 	schedules.update = newSchedule => updates.next(newSchedule);
 
 	return schedules;

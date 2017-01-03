@@ -35,8 +35,8 @@ app.deleteRequestsTo('/schedule/override')
 app.putRequestsTo('/schedule/override')
 	.subscribe(x => {
 		let body = x.request.body;
-		if(body.length == 2){
-			wiring.schedule.override(body[0], body[1]);
+		if(body.every(x => x.length == 2)){
+			wiring.schedule.override(body);
 			x.response.sendStatus(201);
 		}
 		else

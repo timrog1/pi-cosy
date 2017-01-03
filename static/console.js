@@ -33,30 +33,35 @@ angular.module("console", [])
                </div>
 	       `,
             link: scope => {
+                let pendingOverride = null;
+
                 function refresh()
                 {
-                  $http.get("/status")
-                        .success(s => scope.status = s)
-                        .finally(() => $timeout(refresh, 1000))
+                    (
+                        pendingOverride ?
+                            $http.put("/schedule/override", pendingOverride).success(_ => pendingOverride = null) :
+                            $http.get("/status").success(s => scope.status = s)
+                    ).finally(() => $timeout(refresh, 1000));
                 }
 
-                function override(endTime, temp) {
-                    scope.status.schedule.override = [ endTime, temp ];
-                    $http.put("/schedule/override", [ endTime, temp ]);
+                function override(changes) {
+                    scope.status.schedule.override = changes;
+                    pendingOverride = changes;
                 }
 
                 scope.changeTarget = increment => {
                     let target = scope.status.target;
                     target.current += increment;
-                    let overrideDate = new Date((new Date().getTime()) + 60*60*1000);
-                    override(overrideDate, target.current);
+                    let endDate = new Date((new Date().getTime()) + 60*60*1000);
+                    override([[new Date(), target.current], [ endDate, target.next[1] ]]);
                 }
 
-                scope.changeTime = increment => {
+                scope.changeTime = minutes => {
                     let target = scope.status.target
-                    let ms = increment * 60000;
+                    let ms = minutes * 60000;
                     target.next[0] = new Date(~~(new Date(target.next[0]) / ms + 1) * ms);
-                    override(target.next[0], target.current);
+                    if (target.next[0] < new Date()) target.next[0] = new Date();
+                    override([[new Date(), target.current], target.next]);
                 }
 
                 scope.clear = () => {
@@ -64,7 +69,7 @@ angular.module("console", [])
                     $http.delete("/schedule/override");
                 };
 
-                scope.hasOverride = override => override && Date.parse(override[0]) > new Date();
+                scope.hasOverride = override => override && override.length;
 
                 refresh(); 
             }
