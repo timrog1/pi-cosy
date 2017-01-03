@@ -6,28 +6,27 @@ module.exports = (scheduleObs, timeObs) => {
 		return new Date(midnight.getFullYear(), midnight.getMonth(), midnight.getDate(), Math.floor(number / 100), number % 100);
 	}
 
+	let relativeDayToAbsolute = (day, midnight) => 
+		day.map (([minString, temp]) => [ addTime(midnight, minString), temp ]);
+
 	let calculate = (schedule, now) => {
-		if (schedule.override) {
-			let endTime = new Date(schedule.override[0]);
-			if (endTime > now)
-				return { current: schedule.override[1], next: [ endTime, calculate(schedule, endTime).current ] };
+		let changes = (schedule.override || []).map(([d, t]) => [ new Date(d), t, true ]);
+		let earliest = changes[0] && changes[0][0], latest = changes[0] && changes[changes.length-1][0];
+		let filter = ([d, t]) => !(d > earliest && d < latest);
+		for (var i = -1; i <= 1; i++) {
+			let midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+			let day = schedule.days[midnight.getDay()];
+			let dayChanges = relativeDayToAbsolute(day, midnight).filter(filter);
+			changes = changes.concat(dayChanges);
 		}
-
-		let dayOfWeek = now.getDay();
-		let midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-		let yesterday = schedule.days[(dayOfWeek + 6) % 7];
-		let target = yesterday[yesterday.length-1][1];
-		for(let [time, temp] of schedule.days[dayOfWeek]) {
-			let changeTime = addTime(midnight, time);
-			if (changeTime > now)
-				return { current: target, next: [ changeTime, temp ] };
-
-			target = temp;
+		
+		changes.sort(([a, _], [b, __]) => a-b);
+		var previous = changes[0];
+		for (let change of changes) {
+			if (change[0] > now) 
+				return { current: previous[1], next: [ change[0], change[1] ], override: !!previous[2] || latest > now };
+			previous = change;
 		}
-
-		var tomorrow = schedule.days[(dayOfWeek + 1) % 7][0];
-		midnight.setDate(midnight.getDate() + 1);
-		return { current: target, next: [ addTime(midnight, tomorrow[0]), tomorrow[1] ] };
 	};
 		
 	return rx.Observable.combineLatest(scheduleObs, timeObs, calculate).distinctUntilChanged();

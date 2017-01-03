@@ -23,8 +23,8 @@ describe("schedule", () => {
 		it("sets the override into the schedule", () => {
 			var schedule = sut("filename.json");
 			var promise = schedule.skip(1).first().toPromise().then(r => expect(r.override).toEqual(override));
-			var override = [new Date(), 21.5];
-			schedule.override(override[0], override[1]);
+			var override = [[new Date(), 21.5]];
+			schedule.override(override);
 			return promise;
 		});
 
