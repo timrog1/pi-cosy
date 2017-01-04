@@ -23,9 +23,12 @@ module.exports = (scheduleObs, timeObs) => {
 		changes.sort(([a, _], [b, __]) => a-b);
 		var previous = changes[0];
 		for (let change of changes) {
+			if(change[1] != previous[1])
+			{
 			if (change[0] > now) 
 				return { current: previous[1], next: [ change[0], change[1] ], override: !!previous[2] || latest > now };
 			previous = change;
+			}
 		}
 	};
 		

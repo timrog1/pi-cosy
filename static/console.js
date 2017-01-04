@@ -14,7 +14,7 @@ angular.module("console", [])
                     <div class="inline">
                         until 
                         <button ng-click="changeTime(-30)"><i class="icon-rewind"></i></button>                        
-                        {{ status.target.next[0] | date : 'H:mm' }} 
+                        <span class="time">{{ status.target.next[0] | date : 'H' }}<sup>{{ status.target.next[0] | date : 'mm' }}</sup></span>
                         <button ng-click="changeTime(30)"><i class="icon-fast-forward"></i></button>                        
                         then {{ status.target.next[1] | number : 0}}°C
                         <button class="clear" ng-click="clear()"><i class="icon-reload"></i></button>
@@ -69,7 +69,7 @@ angular.module("console", [])
                     $http.delete("/schedule/override");
                 };
 
-                scope.hasOverride = override => override && override.length;
+                scope.hasOverride = override => (override || []).find(([d, t]) => Date.parse(d) > new Date());
 
                 refresh(); 
             }
