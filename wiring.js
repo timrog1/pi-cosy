@@ -21,7 +21,7 @@ let weatherObs = weather(config);
 
 let relayPositions = controller.relayPositions(sensor, target.map(t => t.current)).cache(1);
 
-relayPositions.subscribe(_ => console.log(_));
+relayPositions.subscribe(relay.set);
 
 let statusCombined = rx.Observable.combineLatest(
 	sensor,
