@@ -55,8 +55,12 @@ button:focus {
 }
 
 .current-main { 
-  width:3em;
+  width:3.5em;
   text-align:center;
+}
+
+.current-main .relay-on {
+  font-size: 35px;
 }
 
 .full-buttons { 
