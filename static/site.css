@@ -46,7 +46,7 @@ button {
   font-size:24px;
 }
 
-button:hover {
+button:active {
   background-color: rgba(111, 193, 139, .5);
 }
 
