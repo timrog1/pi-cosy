@@ -33,43 +33,31 @@ describe("targetTemp", () => {
 	
 	describe("override", () => { 
 		it("should allow an override range", () => {
-			schedule.override = [ [ new Date(2016, 3, 3, 7, 25), 25 ] ];
+			schedule.override = { until: new Date(2016, 3, 3, 7, 55), now: 25 };
 			let now = new Date (2016, 3, 3, 7, 30);
 			return expectTempToBe(25, now);
 		});
 		
 		it("should ignore changes for duration of an override range", () => {
-			schedule.override = [ [ new Date(2016, 3, 3, 7, 25), 25 ], [ new Date(2016, 3, 3, 19, 30), 22 ] ];
+			schedule.override = { until : new Date(2016, 3, 3, 19, 30), now:  25 };
 			let now = new Date (2016, 3, 3, 12, 30);
 			return expectTempToBe(25, now);
 		});
-		
-		it("should revert to the second temperature after the first override end time until the next time in the schedule", () => {
-			schedule.override = [ [ new Date(2016, 3, 3, 7, 25), 25 ], [ new Date(2016, 3, 3, 7, 40), 17 ]];
-			let now = new Date (2016, 3, 3, 7, 42);
-			return expectTempToBe(17, now);
-		});
 
-		it("should revert to the schedule after the last override end time and the next time in the schedule", () => {
-			schedule.override = [[ new Date(2016, 3, 3, 7, 25), 25 ]];
+		it("should revert to the schedule after the override end time and the next time in the schedule", () => {
+			schedule.override = { until: new Date(2016, 3, 3, 7, 25), now: 25 };
 			let now = new Date (2016, 3, 3, 8, 0);
 			return expectTempToBe(20, now);
 		});
 
 		it("should indicate that temperature is overridden when override is current", () => { 
-			schedule.override = [ [ new Date(2016, 3, 3, 7, 25), 25 ] ];
-			let now = new Date (2016, 3, 3, 7, 55);
-			return getTarget(now).then(t => expect(t.override).toBe(true));
-		});
-
-		it("should indicate that temperature is overridden when override is in future", () => { 
-			schedule.override = [ [ new Date(2016, 3, 3, 8, 30), 25 ] ];
+			schedule.override = { until: new Date(2016, 3, 3, 8, 25), now: 25 };
 			let now = new Date (2016, 3, 3, 7, 55);
 			return getTarget(now).then(t => expect(t.override).toBe(true));
 		});
 
 		it("should indicate that temperature is not overridden when schedule has resumed", () => { 
-			schedule.override = [ [ new Date(2016, 3, 3, 7, 25), 25 ] ];
+			schedule.override = { until: new Date(2016, 3, 3, 7, 25), now: 25 };
 			let now = new Date (2016, 3, 3, 8, 0);
 			return getTarget(now).then(t => expect(t.override).toBe(false));
 		});
@@ -86,26 +74,26 @@ describe("targetTemp", () => {
 	});
 
 	describe("now and next", () => {
-		it("should give the next time and temperature change", () => {
+		it("should give the next time and temperature changes", () => {
 			let now = new Date (2016, 3, 3, 10, 20); // Sunday
-			return getTarget(now).then(t => expect(t.next).toEqual([new Date(2016, 3, 3, 12, 0), 16]));
+			return getTarget(now).then(({nowAndNext: nn}) => expect([nn[0], nn[1]]).toEqual([[new Date(2016, 3, 3, 8, 0), 20], [new Date(2016, 3, 3, 12, 0), 16]]));
 		});
 
 		it("should give the next time and temperature change during an override", () => {
-			schedule.override = [ [ new Date(2016, 3, 3, 8, 20), 25 ], [ new Date(2016, 3, 3, 9, 25), 18 ]];
+			schedule.override = { until: new Date(2016, 3, 3, 9, 25),  now: 25, temporary: true };
 			let now = new Date (2016, 3, 3, 8, 30); // Sunday
-			return getTarget(now).then(t => expect(t.next).toEqual([new Date(2016, 3, 3, 9, 25), 18]));
+			return getTarget(now).then(({nowAndNext: nn}) => expect([nn[0], nn[1]]).toEqual([[new Date(2016, 3, 3, 8, 0), 25], [new Date(2016, 3, 3, 9, 25), 20]]));
 		});
 
 		it("should give the next time and temperature change after an override", () => {
-			schedule.override = [[new Date(2016, 3, 3, 9, 25), 25]];
+			schedule.override = { until: new Date(2016, 3, 3, 9, 25),  now: 25, temporary: true };
 			let now = new Date (2016, 3, 3, 9, 30); // Sunday
-			return getTarget(now).then(t => expect(t.next).toEqual([new Date(2016, 3, 3, 12, 0), 16]));
+			return getTarget(now).then(({nowAndNext: nn}) => expect([nn[0], nn[1]]).toEqual([[new Date(2016, 3, 3, 8, 0), 20], [new Date(2016, 3, 3, 12, 0), 16]]));
 		});
 
 		it("the next time should wrap around to the following day", () => {
 			let now = new Date (2016, 3, 3, 18, 11);
-			return getTarget(now).then(t => expect(t.next).toEqual([new Date(2016, 3, 4, 8, 0), 20]));
+			return getTarget(now).then(({nowAndNext: nn}) => expect([nn[0], nn[1]]).toEqual([[new Date(2016, 3, 3, 12, 0), 16], [new Date(2016, 3, 4, 8, 0), 20]]));
 		});
 	});
 });
