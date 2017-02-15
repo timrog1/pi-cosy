@@ -1,32 +1,25 @@
 "use strict";
 const timeIncrement = 30 * 60000;
 const incrementTemperatureDuration = 60 * 60000;
-const tempAtTime = (changes, time) => changes.filter(([d]) => d <= time).map(([_, t]) => t).reverse()[0];
-
+const coerce = (flag, newValue) => flag === undefined ? newValue : flag;
 const scheduleOps = {  
     time: { 
-        increment: ([now, ...next]) => {
-                const increment = (nextDate, units) => new Date(~~(new Date(nextDate) / timeIncrement + 1) * timeIncrement);
-                let nextTime = increment(next[0], 1);
-                let nextTemp = tempAtTime(next, nextTime) || now[1];
-                return [now, [nextTime, nextTemp], ...next.filter(([d, _]) => d > nextTime)];
+        increment: (override, now) => {
+                let until = new Date(~~(override.until / timeIncrement + 1) * timeIncrement);
+                return { until, now: override.now, temporary: coerce(override.temporary, false)  };
         },
-        decrement: ([now, next, ...rest]) => {
-                const decrement = (nextDate, units) => new Date(~~(new Date(nextDate - 1) / timeIncrement) * timeIncrement);
-                let newTime = decrement(next[0], 0);
-                return newTime > now[0]
-                    ? [now, [newTime, next[1]], ...rest] 
-                    : [[now[0], next[1]], ...rest];
+        decrement: (override, now) => {
+                let until = new Date(~~((override.until - 1) / timeIncrement) * timeIncrement);
+                until = until < now ? now : until;
+                return { until, now: override.now, temporary: coerce(override.temporary, false) };
         }
     },
     temp: { 
-        increment: ([[nowTime, nowTemp], ...rest]) => {
-            let endTime = new Date(1*nowTime + incrementTemperatureDuration);
-            let endTemp = tempAtTime(rest, endTime) || nowTemp;
-            rest = rest.filter(([d]) => d > endTime);
-            return [ [nowTime, nowTemp + 1], [ endTime, endTemp ], ...rest ];
+        increment: (override, now) => {
+            let until = override.temporary===undefined ? new Date(1*now + incrementTemperatureDuration) : override.until;
+            return {until, now: override.now + 1, temporary: coerce(override.temporary, true)};
         },
-        decrement: ([[nowTime, nowTemp], ...rest]) => [[nowTime, nowTemp - 1], ...rest]
+        decrement: (override, now) => ({ until: override.until, now: override.now - 1, temporary: coerce(override.temporary, true)})
     }
 };
 

@@ -1,35 +1,33 @@
 "use strict";
 const ops = require("./static/operations");
 describe("operations", () => {
-	let quickMap = a => a.map(([d, t]) => [new Date("2017-01-11T" + d + ":00"), t]);
-	let test = (fn, source, expected) => expect(fn(quickMap(source))).toEqual(quickMap(expected));
+	let fromTime = d => new Date("2017-01-11T" + d + ":00");
+	let now = fromTime("08:25");
 
 	describe("time operations", () => { 
 		it("should increment next change to next 30 min interval", () => 
-			test(ops.time.increment, [["08:00", 20], ["11:08", 16]], [[ "08:00", 20], ["11:30", 16]]));
+			expect(ops.time.increment({ now: 16, until: fromTime("09:25")}, now)).toEqual({ now: 16, until: fromTime("09:30"), temporary: false}));
 		it("should increment next change to next 30 min interval", () => 
-			test(ops.time.increment, [["08:00", 20], ["11:30", 16]], [[ "08:00", 20], ["12:00", 16]]));
-		it("should remove time change when incrementing into the next block", () => 
-			test(ops.time.increment, [["08:00", 20], ["11:30", 16], ["11:45", 10]], [[ "08:00", 20], ["12:00", 10]]));
-
+			expect(ops.time.increment({ now: 16, until: fromTime("11:30")}, now)).toEqual({ now: 16, until: fromTime("12:00"), temporary: false}));
 
 		it("should decrement next change to previous 30 min interval", () => 
-			test(ops.time.decrement, [["08:00", 20], ["11:08", 16]], [[ "08:00", 20], ["11:00", 16]]));
+			expect(ops.time.decrement({ now: 16, until: fromTime("09:25")}, now)).toEqual({ now: 16, until: fromTime("09:00"), temporary: false}));
 		it("should decrement next change to previous 30 min interval", () => 
-			test(ops.time.decrement, [["08:00", 20], ["11:00", 16]], [[ "08:00", 20], ["10:30", 16]]));
-		it("should merge with current temp when decrementing to current time", () => 
-			test(ops.time.decrement, [["08:17", 20], ["08:30", 16]], [[ "08:17", 16 ]]));
+			expect(ops.time.decrement({ now: 16, until: fromTime("09:00")}, now)).toEqual({ now: 16, until: fromTime("08:30"), temporary: false}));
+
+		it("should not decrement beyond current time", () => 
+			expect(ops.time.decrement({ now: 16, until: fromTime("08:30")}, now)).toEqual({ now: 16, until: fromTime("08:25"), temporary: false}));
 	});
 
 	describe("temperature operations", () => { 
-		it("should increment temperature for a 1 hour period where next change > 1h", () => 
-			test(ops.temp.increment, [["08:00", 20], ["11:08", 16]], [[ "08:00", 21], [ "09:00", 20 ], ["11:08", 16]]));
-		it("should increment temperature for a 1 hour period where next change <= 1h", () => 
-			test(ops.temp.increment, [["08:00", 20], ["08:45", 16]], [[ "08:00", 21], [ "09:00", 16 ]]));
-		it("should increment temperature for a 1 hour period where more than one next change <= 1h", () => 
-			test(ops.temp.increment, [["08:00", 20], ["08:30", 16], ["08:45", 15]], [[ "08:00", 21], [ "09:00", 15 ]]));
+		it("should increment temperature for a 1 hour temporary period", () => 
+			expect(ops.temp.increment({ now: 16, until: fromTime("11:30")}, now)).toEqual({ now: 17, until: fromTime("09:25"), temporary: true}));
+
+    	it("should leave times alone if temporary flag already set", () => 
+			expect(ops.temp.increment({ now: 16, until: fromTime("11:30"), temporary: false }, now))
+				.toEqual({ now: 17, until: fromTime("11:30"), temporary: false }));
 
 		it("should decrement temperature until next temperature change", () => 
-			test(ops.temp.decrement, [["08:00", 20], ["11:08", 16]], [[ "08:00", 19], ["11:08", 16]]));
+			expect(ops.temp.decrement({ now: 16, until: fromTime("11:30")}, now)).toEqual({ now: 15, until: fromTime("11:30"), temporary: true}));
 	});
 });
