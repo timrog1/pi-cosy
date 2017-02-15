@@ -10,7 +10,7 @@ angular.module("console", [])
                         {{status.target.current | number : 0}}°C<i class="relay-on"></i>                        
                     </h1>
                 </section>
-                <section ng-class="{override: hasOverride(status.schedule.override)}">
+                <section ng-class="{override: hasOverride(status.schedule.override)}" class="iconic">
                     <i class="icon-clock"></i>
                     <div class="inline">
                         until 
@@ -21,13 +21,13 @@ angular.module("console", [])
                         <button class="clear" ng-click="clear()"><i class="icon-reload"></i></button>
                     </div>
                 </section>
-                <section>
+                <section class="iconic">
                     <i class="icon-thermometer"></i>
                     <div class="inline">
                     {{status.inside | number : 1}}°C
                     </div> 
                 </section>
-                <section class="current-outside">
+                <section class="current-outside iconic">
                     <i class="icon-cloud"></i>
                     {{status.outside | number : 1}}°C
                 </section>
