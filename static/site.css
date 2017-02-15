@@ -84,13 +84,13 @@ button:focus {
   text-align: right;
 }
 
-section {
+.iconic {
   padding:16px 0 16px 2.5em;
   border-bottom: 1px solid #82c99a;
   transition: background-color .5s, color .5s;
 }
 
-section > i { 
+.iconic > i { 
   margin-left: -2.0em;
 }
 
