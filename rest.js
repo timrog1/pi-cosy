@@ -2,7 +2,7 @@
 let http = require("http");
 
 module.exports = {
-	get: function(url) {
+	get: function(url, headers) {
 		 //let options = {
 		 //	host: "proxy",
 		 //	port: 8080,

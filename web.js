@@ -7,9 +7,12 @@ var express = require("express");
 var bodyParser = require('body-parser')
 var app = express();
 var rx = require("rxjs");
+var config = require("./config.json");
+var request = require("request-json");
 
 app.use(bodyParser.json());
 
+if(config.googleAuth) require("./google-auth")(app, config.googleAuth);
 
 ['get', 'put', 'post', 'delete'].map(method =>
 	app[method + "RequestsTo"] = url => 

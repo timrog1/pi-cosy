@@ -12,15 +12,9 @@ let time = rx.Observable.timer(0, 1000).map(() => new Date());
 
 let target = targetTemp(schedule, time);
 
-let config = {
-    location: "GU8+5BY,UK",
-    apiKey: "fec3e673e40c2bd7e653fde691adb046"
-};
-
-let weatherObs = weather(config);
+let weatherObs = weather(require("./config.json").weather);
 
 let relayPositions = controller.relayPositions(sensor, target.map(t => t.current)).cache(1);
-
 relayPositions.subscribe(relay.set);
 
 let statusCombined = rx.Observable.combineLatest(
