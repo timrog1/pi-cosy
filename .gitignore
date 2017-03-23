@@ -1,6 +1,6 @@
 logs/**
 /nohup.out
 /startup.log
-node_modules/**
 .vscode/**
 /config.json
+**/node_modules
