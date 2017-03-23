@@ -6,7 +6,7 @@ var rx = require("rxjs");
 require("./observable-files")
 
 module.exports = (filename, scheduler) => {
-	let scheduleFileObs = rx.Observable.fromFile(filename).map(data => JSON.parse(data)).cache(1);
+	let scheduleFileObs = rx.Observable.fromFile(filename).map(data => JSON.parse(data)).publishReplay().refCount();
 	
 	let updates = new rx.Subject();
 	let schedules = scheduleFileObs.merge(updates);

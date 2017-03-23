@@ -4,3 +4,4 @@ logs/**
 .vscode/**
 /config.json
 **/node_modules
+node_modules
