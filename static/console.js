@@ -36,12 +36,20 @@ angular.module("console", [])
             link: scope => {
                 let pendingOverride = null;
 
+                let jsonDateParse = val => 
+                    typeof val == "string" && Date.parse(val) > 0 ? new Date(val) : val;
+                   
+                let jsonFilter = json =>
+                    typeof json == "object" && !Array.isArray(json) ?
+                        Object.keys(json).reduce((r, k) => (r[k] = jsonFilter(json[k]), r), {}) :
+                        jsonDateParse(json);
+
                 function refresh()
                 {
                     (
                         pendingOverride ?
                             $http.put("/schedule/override", pendingOverride).success(_ => pendingOverride = null) :
-                            $http.get("/status").success(s => scope.status = s)
+                            $http.get("/status").success(s => scope.status = jsonFilter(s))
                     ).finally(() => $timeout(refresh, 1000));
                 }
 
