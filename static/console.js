@@ -15,12 +15,14 @@ angular.module("console", [])
                 <section ng-class="{override: hasOverride(status.schedule.override)}" class="iconic">
                     <i class="icon-clock"></i>
                     <div class="inline">
-                        until 
+                        <nobr>until 
                         <button ng-click="decTime()"><i class="icon-rewind"></i></button>                        
                         {{ status.target.until | date : 'Hmm' }} 
-                        <button ng-click="incTime()"><i class="icon-fast-forward"></i></button>                        
-                        then {{ status.target.nowAndNext[1][1] | number : 0}}°C
+                        <button ng-click="incTime()"><i class="icon-fast-forward"></i></button>
+                        </nobr>
+                        <nobr>then {{ status.target.nowAndNext[1][1] | number : 0}}°C
                         <button class="clear" ng-click="clear()"><i class="icon-reload"></i></button>
+                        </nobr>
                     </div>
                 </section>
                 <section class="iconic">
@@ -62,7 +64,6 @@ angular.module("console", [])
                     pendingOverride = sch.override = operator(override, new Date());
                     target.current = sch.override.now;
                     target.until = sch.override.until;
-                    scope.status.relay = true;
                 }
 
                 scope.incTarget = () => modify(operations.temp.increment, true);
