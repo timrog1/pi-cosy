@@ -75,19 +75,19 @@ describe("targetTemp", () => {
 
 	describe("now and next", () => {
 		it("should give the next time and temperature changes", () => {
-			let now = new Date (2016, 3, 3, 10, 20); // Sunday
+			let now = new Date (2016, 3, 3, 10, 20); 
 			return getTarget(now).then(({nowAndNext: nn}) => expect([nn[0], nn[1]]).toEqual([[new Date(2016, 3, 3, 8, 0), 20], [new Date(2016, 3, 3, 12, 0), 16]]));
 		});
 
 		it("should give the next time and temperature change during an override", () => {
 			schedule.override = { until: new Date(2016, 3, 3, 9, 25),  now: 25, temporary: true };
-			let now = new Date (2016, 3, 3, 8, 30); // Sunday
+			let now = new Date (2016, 3, 3, 8, 30); 
 			return getTarget(now).then(({nowAndNext: nn}) => expect([nn[0], nn[1]]).toEqual([[new Date(2016, 3, 3, 8, 0), 25], [new Date(2016, 3, 3, 9, 25), 20]]));
 		});
 
 		it("should give the next time and temperature change after an override", () => {
 			schedule.override = { until: new Date(2016, 3, 3, 9, 25),  now: 25, temporary: true };
-			let now = new Date (2016, 3, 3, 9, 30); // Sunday
+			let now = new Date (2016, 3, 3, 9, 30); 
 			return getTarget(now).then(({nowAndNext: nn}) => expect([nn[0], nn[1]]).toEqual([[new Date(2016, 3, 3, 8, 0), 20], [new Date(2016, 3, 3, 12, 0), 16]]));
 		});
 
