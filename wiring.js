@@ -14,7 +14,7 @@ let target = targetTemp(schedule, time);
 
 let weatherObs = weather(require("./config.json").weather);
 
-let relayPositions = controller.relayPositions(sensor, target.map(t => t.current)).publishReplay().refCount();
+let relayPositions = controller.relayPositions(sensor, target.map(t => t.current)).publishReplay(1).refCount();
 relayPositions.subscribe(relay.set);
 
 let statusCombined = rx.Observable.combineLatest(

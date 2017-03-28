@@ -34,5 +34,9 @@ describe("schedule", () => {
 			schedule.update({ days: [], updated: true });
 			return promise;
 		});
+
+		it("removes expired overrides", () => {
+			fakeSchedule.override = { now: 22, until: new Date(2015, 1,1 )}
+		});
 	});
 });
