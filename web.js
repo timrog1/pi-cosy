@@ -7,7 +7,8 @@ var express = require("express");
 var bodyParser = require('body-parser')
 var app = express();
 var rx = require("rxjs");
-var config = require("./config.json");
+var fs = require("fs");
+var config = fs.existsSync("./config.json") ? require("./config.json") : {};
 var request = require("request-json");
 
 let reviveDates = (k, v) => /^\d{4}-\d{2}-\d{2}/.test(v) ? new Date(v) : v;

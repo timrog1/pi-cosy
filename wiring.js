@@ -1,6 +1,7 @@
 "use strict";
 
 let rx = require("rxjs");
+let fs = require("fs");
 let sensor = require("./sensor");
 let targetTemp = require("./targetTemp");
 let relay = require("./relay");
@@ -12,7 +13,8 @@ let time = rx.Observable.timer(0, 1000).map(() => new Date());
 
 let target = targetTemp(schedule, time);
 
-let weatherObs = weather(require("./config.json").weather);
+let config = fs.existsSync("./config.json") ? require("./config.json") : {};
+let weatherObs = weather(config.weather);
 
 let relayPositions = controller.relayPositions(sensor, target.map(t => t.current)).publishReplay(1).refCount();
 relayPositions.subscribe(relay.set);
