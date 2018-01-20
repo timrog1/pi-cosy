@@ -4,7 +4,7 @@ let port = process.argv[2] || 80;
 
 var wiring = require("./wiring");
 var express = require("express");
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 var app = express();
 var rx = require("rxjs");
 var fs = require("fs");
@@ -45,10 +45,13 @@ app.putRequestsTo('/schedule/override')
 			x.response.sendStatus(400);
 	});
 
-let babel = require('express-babelify-middleware');
+	
+
+app.use('/*.(css|js)', (req, res, next) => { res.header('Cache-Control', 'public, max-age:86400'); next(); });
+
+const babel = require('express-babelify-middleware');
 app.use('/console.js', babel('static/console.js'));
 app.use(express.static('static'));
-
 app.use((req, res) => res.status(404).send("Not found"));
 
 app.listen(port, () => console.log("listening"));

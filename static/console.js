@@ -2,7 +2,7 @@
 const operations = require("./operations");
 angular.module("console", [])
     .directive("currentTemps", ($timeout, $http) => ({ 
-            template: `<div class="currentTemps">
+            template: `<div class="currentTemps" onclick>
                 <section>
                     <h1 class="inline current-main full-buttons">
                         <button ng-click="decTarget()" class="minus"><i class="icon-circle-minus"></i></button>
@@ -35,7 +35,7 @@ angular.module("console", [])
                 </section>
                </div>
 	       `, 
-            link: scope => {
+            link: (scope, element) => {
                 let pendingOverride = null;
 
                 let jsonDateParse = val => 
@@ -79,6 +79,11 @@ angular.module("console", [])
                 scope.hasOverride = override => override && new Date(override.until) > new Date();
 
                 refresh(); 
+
+                element.bind('touchend', e => { 
+                    e.preventDefault();
+                    e.target.click();
+                });
             }
     }))
     .directive("flameIcon", () => ({
