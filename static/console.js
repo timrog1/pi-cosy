@@ -3,11 +3,12 @@ const operations = require("./operations");
 angular.module("console", [])
     .directive("currentTemps", ($timeout, $http) => ({ 
             template: `<div class="currentTemps" onclick>
+                <div class="indicators"><flame-icon ng-if="status.relay"></flame-icon></div>
                 <section>
                     <h1 class="inline current-main full-buttons">
                         <button ng-click="decTarget()" class="minus"><i class="icon-circle-minus"></i></button>
                         <button ng-click="incTarget()" class="plus"><i class="icon-circle-plus"></i></button>
-                        {{status.target.current | number : 0}}°C<flame-icon ng-if="status.relay"></flame-icon>                        
+                        {{status.target.current | number : 0}}°C                        
                     </h1>
                 </section>
                 <section ng-class="{override: hasOverride(status.schedule.override)}" class="iconic">

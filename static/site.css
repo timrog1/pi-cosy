@@ -22,6 +22,12 @@ section {
   display: inline-block;
 }
 
+.indicators{
+  position: absolute;
+  right:0;
+  top:0;
+}
+
 body {
   font-family: 'Work Sans';
   color: #5eba7d;
